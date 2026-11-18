@@ -8,9 +8,11 @@ from typing import Annotated
 import typer
 
 from rag_eval_lab import __version__, store
-from rag_eval_lab.config import get_settings
+from rag_eval_lab.config import Settings, get_settings
 from rag_eval_lab.embeddings import Embedder, FastEmbedEmbedder, embedding_text
-from rag_eval_lab.evals.dataset import load_questions, missing_sections
+from rag_eval_lab.evals.dataset import EvalQuestion, load_questions, missing_sections
+from rag_eval_lab.evals.report import render_summary
+from rag_eval_lab.evals.runner import RunConfig, RunResult, load_runs, run_eval, save_run
 from rag_eval_lab.ingest.chunking import (
     Strategy,
     chunk_documents,
@@ -138,3 +140,80 @@ def check_evalset(
     if problems:
         raise typer.Exit(code=1)
     typer.echo(f"{len(questions)} questions, every page and section found")
+
+
+def _pages(settings: Settings) -> dict[str, str]:
+    return {doc.doc_id: doc.text for doc in load_markdown_dir(settings.corpus_dir)}
+
+
+def _evaluate(
+    config: RunConfig,
+    conn: store.Connection,
+    embedder: Embedder,
+    questions: list[EvalQuestion],
+    pages: dict[str, str],
+) -> RunResult:
+    retriever = build_retriever(config.retriever, conn, config.strategy.value, embedder)
+    return run_eval(
+        questions,
+        pages,
+        retriever,
+        config,
+        corpus=f"FastAPI {FASTAPI_DOCS.version} docs",
+        embedding_model=embedder.name,
+    )
+
+
+def _describe(result: RunResult) -> str:
+    m = result.metrics
+    return (
+        f"{result.config.name:22} hit@1 {m['hit@1']:4.0%}  hit@5 {m['hit@5']:4.0%}  "
+        f"hit@10 {m['hit@10']:4.0%}  mrr@10 {m['mrr@10']:.3f}  p50 {m['latency_p50_ms']:.0f} ms"
+    )
+
+
+@app.command("eval")
+def eval_command(
+    strategy: Annotated[Strategy, typer.Option(help="Indexed collection to search.")] = (
+        Strategy.HEADING
+    ),
+    retriever: Annotated[RetrieverName, typer.Option(help="Retrieval method.")] = (
+        RetrieverName.HYBRID
+    ),
+    k: Annotated[int, typer.Option("-k", help="How many chunks to retrieve.")] = 10,
+) -> None:
+    """Score one configuration on the eval set and save the run."""
+    settings = get_settings()
+    questions, pages = load_questions(settings.eval_file), _pages(settings)
+    embedder = load_embedder(settings.embedding_model)
+    config = RunConfig(strategy=strategy, retriever=retriever, k=k)
+    with store.connect(settings.database_url) as conn:
+        result = _evaluate(config, conn, embedder, questions, pages)
+    path = save_run(result, settings.results_dir / "runs")
+    typer.echo(f"{_describe(result)}  -> {path}")
+
+
+@app.command("eval-grid")
+def eval_grid() -> None:
+    """Score every chunking strategy with every retrieval method, then write the summary."""
+    settings = get_settings()
+    questions, pages = load_questions(settings.eval_file), _pages(settings)
+    embedder = load_embedder(settings.embedding_model)
+    with store.connect(settings.database_url) as conn:
+        for strategy in Strategy:
+            for name in RetrieverName:
+                config = RunConfig(strategy=strategy, retriever=name)
+                result = _evaluate(config, conn, embedder, questions, pages)
+                save_run(result, settings.results_dir / "runs")
+                typer.echo(_describe(result))
+    report()
+
+
+@app.command()
+def report() -> None:
+    """Write results/summary.md from the saved runs and print it."""
+    settings = get_settings()
+    text = render_summary(load_runs(settings.results_dir / "runs"))
+    settings.results_dir.mkdir(parents=True, exist_ok=True)
+    (settings.results_dir / "summary.md").write_text(text, encoding="utf-8")
+    typer.echo(text)
