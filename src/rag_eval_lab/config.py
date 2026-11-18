@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     embedding_model: str = Field(
         default="BAAI/bge-small-en-v1.5", description="fastembed model for chunk vectors."
     )
+    rerank_model: str = Field(
+        default="Xenova/ms-marco-MiniLM-L-6-v2", description="fastembed cross-encoder model."
+    )
+    rerank_candidates: int = Field(default=30, description="Chunks fetched before re-ranking.")
 
     @property
     def corpus_dir(self) -> Path:

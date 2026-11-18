@@ -23,7 +23,7 @@ from rag_eval_lab.ingest.chunking import (
 from rag_eval_lab.ingest.corpus import FASTAPI_DOCS, fetch_corpus
 from rag_eval_lab.ingest.loaders import load_markdown_dir
 from rag_eval_lab.log import configure_logging
-from rag_eval_lab.retrieval import RetrieverName, build_retriever
+from rag_eval_lab.retrieval import CrossEncoderReranker, Reranker, RetrieverName, build_retriever
 
 app = typer.Typer(help="Run RAG retrieval experiments and evaluations.", no_args_is_help=True)
 
@@ -81,6 +81,11 @@ def load_embedder(model_name: str) -> Embedder:
     return FastEmbedEmbedder(model_name)
 
 
+def load_reranker(model_name: str) -> Reranker:
+    """Build the cross-encoder used for re-ranking. Tests replace this function."""
+    return CrossEncoderReranker(model_name)
+
+
 @app.command()
 def index(
     strategy: Annotated[Strategy, typer.Option(help="Which chunk file to index.")] = (
@@ -113,12 +118,17 @@ def search(
         RetrieverName.HYBRID
     ),
     k: Annotated[int, typer.Option("-k", help="How many chunks to show.")] = 5,
+    rerank: Annotated[bool, typer.Option(help="Re-rank candidates with a cross-encoder.")] = False,
 ) -> None:
     """Show the top chunks for a question, with their pages and headings."""
     settings = get_settings()
     embedder = load_embedder(settings.embedding_model)
+    reranker = load_reranker(settings.rerank_model) if rerank else None
     with store.connect(settings.database_url) as conn:
-        hits = build_retriever(retriever, conn, strategy.value, embedder).retrieve(query, k)
+        found = build_retriever(
+            retriever, conn, strategy.value, embedder, reranker, settings.rerank_candidates
+        )
+        hits = found.retrieve(query, k)
     if not hits:
         typer.echo("No matching chunks.")
     for rank, hit in enumerate(hits, start=1):
@@ -152,8 +162,18 @@ def _evaluate(
     embedder: Embedder,
     questions: list[EvalQuestion],
     pages: dict[str, str],
+    reranker: Reranker | None = None,
 ) -> RunResult:
-    retriever = build_retriever(config.retriever, conn, config.strategy.value, embedder)
+    if config.rerank and reranker is None:
+        raise ValueError(f"{config.name} needs a reranker")
+    retriever = build_retriever(
+        config.retriever,
+        conn,
+        config.strategy.value,
+        embedder,
+        reranker if config.rerank else None,
+        get_settings().rerank_candidates,
+    )
     return run_eval(
         questions,
         pages,
@@ -181,31 +201,38 @@ def eval_command(
         RetrieverName.HYBRID
     ),
     k: Annotated[int, typer.Option("-k", help="How many chunks to retrieve.")] = 10,
+    rerank: Annotated[bool, typer.Option(help="Re-rank candidates with a cross-encoder.")] = False,
 ) -> None:
     """Score one configuration on the eval set and save the run."""
     settings = get_settings()
     questions, pages = load_questions(settings.eval_file), _pages(settings)
     embedder = load_embedder(settings.embedding_model)
-    config = RunConfig(strategy=strategy, retriever=retriever, k=k)
+    reranker = load_reranker(settings.rerank_model) if rerank else None
+    config = RunConfig(strategy=strategy, retriever=retriever, rerank=rerank, k=k)
     with store.connect(settings.database_url) as conn:
-        result = _evaluate(config, conn, embedder, questions, pages)
+        result = _evaluate(config, conn, embedder, questions, pages, reranker)
     path = save_run(result, settings.results_dir / "runs")
     typer.echo(f"{_describe(result)}  -> {path}")
 
 
 @app.command("eval-grid")
-def eval_grid() -> None:
+def eval_grid(
+    rerank: Annotated[bool, typer.Option(help="Also run every pair with re-ranking.")] = True,
+) -> None:
     """Score every chunking strategy with every retrieval method, then write the summary."""
     settings = get_settings()
     questions, pages = load_questions(settings.eval_file), _pages(settings)
     embedder = load_embedder(settings.embedding_model)
+    reranker = load_reranker(settings.rerank_model) if rerank else None
+    variants = [False, True] if rerank else [False]
     with store.connect(settings.database_url) as conn:
         for strategy in Strategy:
             for name in RetrieverName:
-                config = RunConfig(strategy=strategy, retriever=name)
-                result = _evaluate(config, conn, embedder, questions, pages)
-                save_run(result, settings.results_dir / "runs")
-                typer.echo(_describe(result))
+                for with_rerank in variants:
+                    config = RunConfig(strategy=strategy, retriever=name, rerank=with_rerank)
+                    result = _evaluate(config, conn, embedder, questions, pages, reranker)
+                    save_run(result, settings.results_dir / "runs")
+                    typer.echo(_describe(result))
     report()
 
 

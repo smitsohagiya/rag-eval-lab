@@ -1,4 +1,5 @@
 import json
+from collections.abc import Sequence
 from pathlib import Path
 
 import pytest
@@ -63,11 +64,22 @@ def test_eval_grid_writes_runs_and_summary(
     def fake_embedder(model_name: str) -> Embedder:
         return EMBEDDER
 
+    class FirstWordReranker:
+        name = "first-word"
+
+        def score(self, query: str, texts: Sequence[str]) -> list[float]:
+            return [float(query.split()[0] in text.lower()) for text in texts]
+
+    def fake_reranker(model_name: str) -> FirstWordReranker:
+        return FirstWordReranker()
+
     monkeypatch.setattr(cli, "load_embedder", fake_embedder)
+    monkeypatch.setattr(cli, "load_reranker", fake_reranker)
     result = CliRunner().invoke(cli.app, ["eval-grid"])
 
     assert result.exit_code == 0, result.output
-    assert len(list((tmp_path / "results" / "runs").glob("*.json"))) == 6
+    assert len(list((tmp_path / "results" / "runs").glob("*.json"))) == 12
     summary = (tmp_path / "results" / "summary.md").read_text()
     assert "| Chunking | Retrieval |" in summary
     assert "heading-keyword" in result.output
+    assert "fixed-hybrid-rerank" in result.output
