@@ -52,8 +52,10 @@ def connect(url: str) -> Iterator[Connection]:
 def ensure_schema(conn: Connection, dim: int) -> None:
     """Create the table and indexes if needed. Refuses to mix vectors of different sizes."""
     row = conn.execute(
+        # Look only in the current schema, which is where CREATE TABLE would put the table.
         "SELECT atttypmod FROM pg_attribute "
-        "WHERE attrelid = to_regclass('chunks') AND attname = 'embedding'"
+        "WHERE attrelid = to_regclass(quote_ident(current_schema()) || '.chunks') "
+        "AND attname = 'embedding'"
     ).fetchone()
     if row is not None and row[0] != dim:
         raise ValueError(
