@@ -1,0 +1,623 @@
+{
+  "config": {
+    "strategy": "fixed",
+    "retriever": "keyword",
+    "rerank": true,
+    "k": 10
+  },
+  "corpus": "FastAPI 0.165.0 docs",
+  "embedding_model": "BAAI/bge-small-en-v1.5",
+  "started_at": "2026-11-18T20:22:35+00:00",
+  "questions": 100,
+  "metrics": {
+    "hit@1": 0.7,
+    "hit@3": 0.91,
+    "hit@5": 0.93,
+    "hit@10": 0.95,
+    "mrr@10": 0.8056111111111112,
+    "latency_p50_ms": 1903.875,
+    "latency_p95_ms": 2257.9664999999995
+  },
+  "per_question": [
+    {
+      "id": "q001",
+      "area": "tutorial",
+      "first_relevant_rank": null,
+      "latency_ms": 1565.59
+    },
+    {
+      "id": "q002",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1782.04
+    },
+    {
+      "id": "q003",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2034.36
+    },
+    {
+      "id": "q004",
+      "area": "tutorial",
+      "first_relevant_rank": 4,
+      "latency_ms": 1800.27
+    },
+    {
+      "id": "q005",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1825.13
+    },
+    {
+      "id": "q006",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1823.53
+    },
+    {
+      "id": "q007",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1631.01
+    },
+    {
+      "id": "q008",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1624.35
+    },
+    {
+      "id": "q009",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1971.13
+    },
+    {
+      "id": "q010",
+      "area": "tutorial",
+      "first_relevant_rank": 5,
+      "latency_ms": 1963.18
+    },
+    {
+      "id": "q011",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 1747.05
+    },
+    {
+      "id": "q012",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1991.43
+    },
+    {
+      "id": "q013",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1754.23
+    },
+    {
+      "id": "q014",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1752.17
+    },
+    {
+      "id": "q015",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1652.0
+    },
+    {
+      "id": "q016",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2297.04
+    },
+    {
+      "id": "q017",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1814.8
+    },
+    {
+      "id": "q018",
+      "area": "tutorial",
+      "first_relevant_rank": null,
+      "latency_ms": 2076.77
+    },
+    {
+      "id": "q019",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1671.41
+    },
+    {
+      "id": "q020",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2203.81
+    },
+    {
+      "id": "q021",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1635.84
+    },
+    {
+      "id": "q022",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 2164.27
+    },
+    {
+      "id": "q023",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1780.51
+    },
+    {
+      "id": "q024",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2171.61
+    },
+    {
+      "id": "q025",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 2124.21
+    },
+    {
+      "id": "q026",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1834.5
+    },
+    {
+      "id": "q027",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2126.14
+    },
+    {
+      "id": "q028",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2040.11
+    },
+    {
+      "id": "q029",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1886.54
+    },
+    {
+      "id": "q030",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2235.53
+    },
+    {
+      "id": "q031",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1880.36
+    },
+    {
+      "id": "q032",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 1701.32
+    },
+    {
+      "id": "q033",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1853.47
+    },
+    {
+      "id": "q034",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2124.66
+    },
+    {
+      "id": "q035",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1746.29
+    },
+    {
+      "id": "q036",
+      "area": "tutorial",
+      "first_relevant_rank": 3,
+      "latency_ms": 1836.64
+    },
+    {
+      "id": "q037",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 2018.3
+    },
+    {
+      "id": "q038",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 1606.79
+    },
+    {
+      "id": "q039",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2128.75
+    },
+    {
+      "id": "q040",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2094.21
+    },
+    {
+      "id": "q041",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2004.06
+    },
+    {
+      "id": "q042",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1793.45
+    },
+    {
+      "id": "q043",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2154.82
+    },
+    {
+      "id": "q044",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 2321.14
+    },
+    {
+      "id": "q045",
+      "area": "tutorial",
+      "first_relevant_rank": 2,
+      "latency_ms": 1994.65
+    },
+    {
+      "id": "q046",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1913.64
+    },
+    {
+      "id": "q047",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1916.27
+    },
+    {
+      "id": "q048",
+      "area": "tutorial",
+      "first_relevant_rank": 1,
+      "latency_ms": 1988.71
+    },
+    {
+      "id": "q049",
+      "area": "tutorial",
+      "first_relevant_rank": null,
+      "latency_ms": 1864.94
+    },
+    {
+      "id": "q050",
+      "area": "advanced",
+      "first_relevant_rank": 2,
+      "latency_ms": 2176.21
+    },
+    {
+      "id": "q051",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1968.76
+    },
+    {
+      "id": "q052",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1707.77
+    },
+    {
+      "id": "q053",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 2035.54
+    },
+    {
+      "id": "q054",
+      "area": "advanced",
+      "first_relevant_rank": 3,
+      "latency_ms": 1835.5
+    },
+    {
+      "id": "q055",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1823.92
+    },
+    {
+      "id": "q056",
+      "area": "advanced",
+      "first_relevant_rank": null,
+      "latency_ms": 1765.85
+    },
+    {
+      "id": "q057",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1696.6
+    },
+    {
+      "id": "q058",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1984.39
+    },
+    {
+      "id": "q059",
+      "area": "advanced",
+      "first_relevant_rank": 2,
+      "latency_ms": 1695.86
+    },
+    {
+      "id": "q060",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 2193.48
+    },
+    {
+      "id": "q061",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1798.8
+    },
+    {
+      "id": "q062",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1797.52
+    },
+    {
+      "id": "q063",
+      "area": "advanced",
+      "first_relevant_rank": 2,
+      "latency_ms": 2044.22
+    },
+    {
+      "id": "q064",
+      "area": "advanced",
+      "first_relevant_rank": 2,
+      "latency_ms": 1796.32
+    },
+    {
+      "id": "q065",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 2148.86
+    },
+    {
+      "id": "q066",
+      "area": "advanced",
+      "first_relevant_rank": 2,
+      "latency_ms": 2033.36
+    },
+    {
+      "id": "q067",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1808.41
+    },
+    {
+      "id": "q068",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1905.45
+    },
+    {
+      "id": "q069",
+      "area": "advanced",
+      "first_relevant_rank": 3,
+      "latency_ms": 2061.05
+    },
+    {
+      "id": "q070",
+      "area": "advanced",
+      "first_relevant_rank": 9,
+      "latency_ms": 1799.09
+    },
+    {
+      "id": "q071",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 2040.25
+    },
+    {
+      "id": "q072",
+      "area": "advanced",
+      "first_relevant_rank": 3,
+      "latency_ms": 1774.96
+    },
+    {
+      "id": "q073",
+      "area": "advanced",
+      "first_relevant_rank": 2,
+      "latency_ms": 2097.56
+    },
+    {
+      "id": "q074",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1924.02
+    },
+    {
+      "id": "q075",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1902.3
+    },
+    {
+      "id": "q076",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1807.49
+    },
+    {
+      "id": "q077",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1724.68
+    },
+    {
+      "id": "q078",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1706.86
+    },
+    {
+      "id": "q079",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1761.82
+    },
+    {
+      "id": "q080",
+      "area": "advanced",
+      "first_relevant_rank": 1,
+      "latency_ms": 1729.32
+    },
+    {
+      "id": "q081",
+      "area": "core",
+      "first_relevant_rank": 1,
+      "latency_ms": 1558.06
+    },
+    {
+      "id": "q082",
+      "area": "deployment",
+      "first_relevant_rank": 2,
+      "latency_ms": 1722.34
+    },
+    {
+      "id": "q083",
+      "area": "deployment",
+      "first_relevant_rank": 1,
+      "latency_ms": 2089.86
+    },
+    {
+      "id": "q084",
+      "area": "deployment",
+      "first_relevant_rank": 1,
+      "latency_ms": 2014.82
+    },
+    {
+      "id": "q085",
+      "area": "deployment",
+      "first_relevant_rank": 2,
+      "latency_ms": 1687.7
+    },
+    {
+      "id": "q086",
+      "area": "deployment",
+      "first_relevant_rank": 1,
+      "latency_ms": 2212.8
+    },
+    {
+      "id": "q087",
+      "area": "deployment",
+      "first_relevant_rank": 1,
+      "latency_ms": 2553.88
+    },
+    {
+      "id": "q088",
+      "area": "deployment",
+      "first_relevant_rank": 1,
+      "latency_ms": 1780.3
+    },
+    {
+      "id": "q089",
+      "area": "core",
+      "first_relevant_rank": 2,
+      "latency_ms": 2255.91
+    },
+    {
+      "id": "q090",
+      "area": "core",
+      "first_relevant_rank": 1,
+      "latency_ms": 2388.27
+    },
+    {
+      "id": "q091",
+      "area": "how-to",
+      "first_relevant_rank": 1,
+      "latency_ms": 2022.22
+    },
+    {
+      "id": "q092",
+      "area": "how-to",
+      "first_relevant_rank": 1,
+      "latency_ms": 2158.19
+    },
+    {
+      "id": "q093",
+      "area": "how-to",
+      "first_relevant_rank": 6,
+      "latency_ms": 2166.16
+    },
+    {
+      "id": "q094",
+      "area": "how-to",
+      "first_relevant_rank": 1,
+      "latency_ms": 1928.91
+    },
+    {
+      "id": "q095",
+      "area": "how-to",
+      "first_relevant_rank": 2,
+      "latency_ms": 1915.0
+    },
+    {
+      "id": "q096",
+      "area": "how-to",
+      "first_relevant_rank": null,
+      "latency_ms": 1911.64
+    },
+    {
+      "id": "q097",
+      "area": "how-to",
+      "first_relevant_rank": 1,
+      "latency_ms": 1862.89
+    },
+    {
+      "id": "q098",
+      "area": "how-to",
+      "first_relevant_rank": 1,
+      "latency_ms": 2301.03
+    },
+    {
+      "id": "q099",
+      "area": "core",
+      "first_relevant_rank": 1,
+      "latency_ms": 1799.49
+    },
+    {
+      "id": "q100",
+      "area": "core",
+      "first_relevant_rank": 1,
+      "latency_ms": 1838.6
+    }
+  ]
+}
