@@ -74,11 +74,12 @@ On this question vector search puts the right section first and keyword search d
 
 ```bash
 uv run rag-eval-lab eval --strategy fixed --retriever vector   # one configuration
-uv run rag-eval-lab eval-grid                                  # every chunking x retrieval pair
+uv run rag-eval-lab eval --strategy fixed --retriever hybrid --rerank
+uv run rag-eval-lab eval-grid                                  # every pair, with and without re-ranking
 uv run rag-eval-lab report                                     # rebuild results/summary.md
 ```
 
-Each run saves `results/runs/<config>.json` with the metrics and, for every question, the rank of the first relevant chunk and the search latency, so any number in the summary can be traced back to individual questions. The metrics are Hit@1/3/5/10 (share of questions with a relevant chunk in the top k), MRR@10 and p50/p95 latency. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
+Each run saves `results/runs/<config>.json` with the metrics and, for every question, the rank of the first relevant chunk and the search latency, so any number in the summary can be traced back to individual questions. The metrics are Hit@1/3/5/10 (share of questions with a relevant chunk in the top k), MRR@10 and p50/p95 latency. `--rerank` re-orders the top 30 candidates with a local cross-encoder ([`Xenova/ms-marco-MiniLM-L-6-v2`](https://huggingface.co/Xenova/ms-marco-MiniLM-L-6-v2), ONNX), which reads the question and each chunk together. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
 
 ## Design decisions
 
