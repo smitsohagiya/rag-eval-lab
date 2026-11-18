@@ -29,6 +29,11 @@ class Settings(BaseSettings):
         return self.data_dir / "corpus" / "fastapi"
 
     @property
+    def eval_file(self) -> Path:
+        """The eval set, tracked in git."""
+        return self.data_dir / "eval" / "questions.jsonl"
+
+    @property
     def chunks_dir(self) -> Path:
         """Where chunk files are written, one JSONL file per configuration."""
         return self.data_dir / "chunks"

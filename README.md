@@ -64,7 +64,11 @@ $ uv run rag-eval-lab search "how do I make a query parameter optional" --retrie
 3. [0.714] tutorial/query-params-str-validations.md :: ... > Alternative (old): `Query` as the default value
 ```
 
-On this question vector search puts the right section first and keyword search does not, and hybrid search (`--retriever hybrid`, the default) follows the keyword order here. One question proves nothing, which is why every configuration is scored on the full eval set below. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
+On this question vector search puts the right section first and keyword search does not, and hybrid search (`--retriever hybrid`, the default) follows the keyword order here. One question proves nothing, which is why every configuration is scored on the full eval set below.
+
+## Eval set
+
+[`data/eval/questions.jsonl`](data/eval/questions.jsonl) has 100 questions about the docs (49 tutorial, 31 advanced, 8 how-to, 7 deployment, 5 core). Each has a reference answer and the page and heading path of the section that answers it. A retrieved chunk counts as relevant when it overlaps that section, which works the same way for every chunking strategy. [data/eval/README.md](data/eval/README.md) explains how the set was built and its limits. `uv run rag-eval-lab check-evalset` confirms every section still exists in the pinned corpus. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
 
 ## Design decisions
 

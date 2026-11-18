@@ -10,6 +10,7 @@ import typer
 from rag_eval_lab import __version__, store
 from rag_eval_lab.config import get_settings
 from rag_eval_lab.embeddings import Embedder, FastEmbedEmbedder, embedding_text
+from rag_eval_lab.evals.dataset import load_questions, missing_sections
 from rag_eval_lab.ingest.chunking import (
     Strategy,
     chunk_documents,
@@ -120,3 +121,20 @@ def search(
         typer.echo("No matching chunks.")
     for rank, hit in enumerate(hits, start=1):
         typer.echo(f"{rank}. [{hit.score:.3f}] {hit.doc_id} :: {hit.heading}")
+
+
+@app.command("check-evalset")
+def check_evalset(
+    questions_file: Annotated[Path | None, typer.Option(help="Eval set to check.")] = None,
+    corpus: Annotated[Path | None, typer.Option(help="Directory of markdown pages.")] = None,
+) -> None:
+    """Check that every eval question points at a page and section that exist in the corpus."""
+    settings = get_settings()
+    questions = load_questions(questions_file or settings.eval_file)
+    pages = {doc.doc_id: doc.text for doc in load_markdown_dir(corpus or settings.corpus_dir)}
+    problems = missing_sections(questions, pages)
+    for problem in problems:
+        typer.echo(problem)
+    if problems:
+        raise typer.Exit(code=1)
+    typer.echo(f"{len(questions)} questions, every page and section found")
