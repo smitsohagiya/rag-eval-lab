@@ -20,6 +20,7 @@ from rag_eval_lab.ingest.chunking import (
 from rag_eval_lab.ingest.corpus import FASTAPI_DOCS, fetch_corpus
 from rag_eval_lab.ingest.loaders import load_markdown_dir
 from rag_eval_lab.log import configure_logging
+from rag_eval_lab.retrieval import RetrieverName, build_retriever
 
 app = typer.Typer(help="Run RAG retrieval experiments and evaluations.", no_args_is_help=True)
 
@@ -97,3 +98,25 @@ def index(
         f"Indexed {stored} chunks into '{strategy.value}' with {embedder.name} "
         f"({embedder.dim} dims) in {time.perf_counter() - started:.0f}s"
     )
+
+
+@app.command()
+def search(
+    query: Annotated[str, typer.Argument(help="The question to search for.")],
+    strategy: Annotated[Strategy, typer.Option(help="Which indexed collection to search.")] = (
+        Strategy.HEADING
+    ),
+    retriever: Annotated[RetrieverName, typer.Option(help="Retrieval method.")] = (
+        RetrieverName.HYBRID
+    ),
+    k: Annotated[int, typer.Option("-k", help="How many chunks to show.")] = 5,
+) -> None:
+    """Show the top chunks for a question, with their pages and headings."""
+    settings = get_settings()
+    embedder = load_embedder(settings.embedding_model)
+    with store.connect(settings.database_url) as conn:
+        hits = build_retriever(retriever, conn, strategy.value, embedder).retrieve(query, k)
+    if not hits:
+        typer.echo("No matching chunks.")
+    for rank, hit in enumerate(hits, start=1):
+        typer.echo(f"{rank}. [{hit.score:.3f}] {hit.doc_id} :: {hit.heading}")
