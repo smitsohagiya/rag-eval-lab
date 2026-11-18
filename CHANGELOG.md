@@ -10,3 +10,4 @@ and the project uses [Semantic Versioning](https://semver.org/).
 
 - `fetch-corpus` downloads the FastAPI 0.165.0 docs, verifies the archive checksum and keeps the English documentation pages (#7).
 - `ingest` cuts pages into chunks by heading section or into fixed-size windows with overlap, without ever splitting a code block (#7).
+- `index` embeds chunks with a local ONNX model and stores them in Postgres with pgvector (HNSW) and a full-text index; `docker compose up -d` starts the database (#8).
