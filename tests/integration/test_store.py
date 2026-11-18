@@ -1,3 +1,4 @@
+import uuid
 from pathlib import Path
 
 import pytest
@@ -75,3 +76,17 @@ def test_index_command(database_url: str, tmp_path: Path, monkeypatch: pytest.Mo
     )
     assert result.exit_code == 0, result.output
     assert f"Indexed {len(CHUNKS)} chunks into 'heading'" in result.output
+
+
+def test_vector_size_check_ignores_tables_in_other_schemas(conn: store.Connection) -> None:
+    shadow = f"shadow_{uuid.uuid4().hex[:8]}"
+    conn.execute(f'CREATE SCHEMA "{shadow}"')
+    try:
+        conn.execute(f'CREATE TABLE "{shadow}".chunks (embedding vector(384))')
+        row = conn.execute("SELECT current_schema()").fetchone()
+        assert row is not None
+        conn.execute(f'SET search_path TO "{row[0]}", "{shadow}", public')
+        store.ensure_schema(conn, 64)  # must not see the 384-dimension table in the shadow schema
+        assert store.count(conn, "heading") == 0
+    finally:
+        conn.execute(f'DROP SCHEMA "{shadow}" CASCADE')
