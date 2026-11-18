@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", description="Python logging level name.")
     environment: str = Field(default="local", description="local, ci or production.")
     data_dir: Path = Field(default=Path("data"), description="Corpora and generated files.")
+    results_dir: Path = Field(default=Path("results"), description="Eval runs and the summary.")
     database_url: str = Field(
         default="postgresql://rag:rag@localhost:5433/rag",
         description="Postgres with pgvector, as started by docker compose.",
