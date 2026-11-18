@@ -33,7 +33,10 @@ make setup                                   # uv installs Python 3.12 and the d
 uv run rag-eval-lab fetch-corpus             # FastAPI 0.165.0 docs, checksum verified
 uv run rag-eval-lab ingest --strategy heading
 uv run rag-eval-lab ingest --strategy fixed --max-chars 1200 --overlap 200
-make check                                   # lint, types, tests
+docker compose up -d                         # Postgres 17 with pgvector on port 5433
+uv run rag-eval-lab index --strategy heading # embeds chunks locally, no API key needed
+uv run rag-eval-lab index --strategy fixed
+make check                                   # lint, types, unit and integration tests
 ```
 
 `fetch-corpus` keeps the 157 English documentation pages and leaves out the changelog and internal pages. `ingest` writes one JSONL file per strategy to `data/chunks/`:
@@ -44,6 +47,8 @@ make check                                   # lint, types, tests
 | fixed (1200 / 200 overlap) | 843 | 1,118 chars | 3,600 chars (one long code block) |
 
 No chunk splits a code block. See [ADR-0002](docs/decisions/ADR-0002-chunk-on-markdown-blocks.md) for how chunking works.
+
+`index` embeds each chunk with [`BAAI/bge-small-en-v1.5`](https://huggingface.co/BAAI/bge-small-en-v1.5) (384 dimensions, run locally through ONNX) and stores it in one Postgres table with an HNSW vector index and a generated full-text column. Re-running `index` replaces that strategy's rows in one transaction, so it never duplicates data. On a laptop CPU it takes about two minutes per strategy.
 
 ## Design decisions
 
