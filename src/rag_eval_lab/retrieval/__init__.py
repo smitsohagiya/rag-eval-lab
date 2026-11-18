@@ -4,12 +4,16 @@ from rag_eval_lab.retrieval.base import Hit, Retriever, RetrieverName
 from rag_eval_lab.retrieval.factory import build_retriever
 from rag_eval_lab.retrieval.hybrid import HybridRetriever, reciprocal_rank_fusion
 from rag_eval_lab.retrieval.keyword import KeywordRetriever
+from rag_eval_lab.retrieval.rerank import CrossEncoderReranker, Reranker, RerankingRetriever
 from rag_eval_lab.retrieval.vector import VectorRetriever
 
 __all__ = [
+    "CrossEncoderReranker",
     "Hit",
     "HybridRetriever",
     "KeywordRetriever",
+    "Reranker",
+    "RerankingRetriever",
     "Retriever",
     "RetrieverName",
     "VectorRetriever",
