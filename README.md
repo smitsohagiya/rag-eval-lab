@@ -6,7 +6,7 @@ Measure how chunking, retrieval and re-ranking choices change RAG answer quality
 
 ## Why
 
-RAG systems are often tuned by feel: change the chunk size, try a few questions, ship it. In my day job the biggest gains came from the opposite habit: a fixed set of questions with known answers, and every change measured against it. This repo is a small, open version of that workflow, built on public documentation so anyone can rerun the numbers.
+RAG systems are often tuned by feel: change the chunk size, try a few questions, ship it. The biggest gains come from the opposite habit: a fixed set of questions with known answers, and every change measured against it. This repo applies that habit to public documentation, so anyone can rerun the numbers.
 
 ## What it compares (v0.1)
 
