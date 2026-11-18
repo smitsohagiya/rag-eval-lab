@@ -50,6 +50,22 @@ No chunk splits a code block. See [ADR-0002](docs/decisions/ADR-0002-chunk-on-ma
 
 `index` embeds each chunk with [`BAAI/bge-small-en-v1.5`](https://huggingface.co/BAAI/bge-small-en-v1.5) (384 dimensions, run locally through ONNX) and stores it in one Postgres table with an HNSW vector index and a generated full-text column. Re-running `index` replaces that strategy's rows in one transaction, so it never duplicates data. On a laptop CPU it takes about two minutes per strategy.
 
+### Try a question
+
+```console
+$ uv run rag-eval-lab search "how do I make a query parameter optional" --retriever vector -k 3
+1. [0.840] tutorial/query-params.md :: Query Parameters > Optional parameters
+2. [0.817] tutorial/query-params.md :: Query Parameters > Required query parameters
+3. [0.794] tutorial/query-params-str-validations.md :: ... > Required parameters and `None`
+
+$ uv run rag-eval-lab search "how do I make a query parameter optional" --retriever keyword -k 3
+1. [0.744] tutorial/query-params.md :: Query Parameters > Required query parameters
+2. [0.730] tutorial/query-param-models.md :: Query Parameter Models > Optional Query Parameter Models
+3. [0.714] tutorial/query-params-str-validations.md :: ... > Alternative (old): `Query` as the default value
+```
+
+On this question vector search puts the right section first and keyword search does not, and hybrid search (`--retriever hybrid`, the default) follows the keyword order here. One question proves nothing, which is why every configuration is scored on the full eval set below. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
+
 ## Design decisions
 
 Recorded in [docs/decisions](docs/decisions).
