@@ -29,9 +29,21 @@ Early. The v0.1 roadmap is tracked in the [issues](https://github.com/smitsohagi
 ## Quickstart
 
 ```bash
-make setup   # uv installs Python 3.12 and the dependencies
-make check   # lint, types, tests
+make setup                                   # uv installs Python 3.12 and the dependencies
+uv run rag-eval-lab fetch-corpus             # FastAPI 0.165.0 docs, checksum verified
+uv run rag-eval-lab ingest --strategy heading
+uv run rag-eval-lab ingest --strategy fixed --max-chars 1200 --overlap 200
+make check                                   # lint, types, tests
 ```
+
+`fetch-corpus` keeps the 157 English documentation pages and leaves out the changelog and internal pages. `ingest` writes one JSONL file per strategy to `data/chunks/`:
+
+| Strategy | Chunks | Median size | Largest |
+| --- | --- | --- | --- |
+| heading | 1,176 | 519 chars | 5,605 chars |
+| fixed (1200 / 200 overlap) | 843 | 1,118 chars | 3,600 chars (one long code block) |
+
+No chunk splits a code block. See [ADR-0002](docs/decisions/ADR-0002-chunk-on-markdown-blocks.md) for how chunking works.
 
 ## Design decisions
 

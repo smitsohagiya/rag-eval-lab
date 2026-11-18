@@ -12,3 +12,7 @@ build/
 *.egg-info/
 .env
 .DS_Store
+
+# Downloaded corpora and generated chunks (rebuild with fetch-corpus and ingest)
+data/corpus/
+data/chunks/
