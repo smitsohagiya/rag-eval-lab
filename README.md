@@ -68,7 +68,17 @@ On this question vector search puts the right section first and keyword search d
 
 ## Eval set
 
-[`data/eval/questions.jsonl`](data/eval/questions.jsonl) has 100 questions about the docs (49 tutorial, 31 advanced, 8 how-to, 7 deployment, 5 core). Each has a reference answer and the page and heading path of the section that answers it. A retrieved chunk counts as relevant when it overlaps that section, which works the same way for every chunking strategy. [data/eval/README.md](data/eval/README.md) explains how the set was built and its limits. `uv run rag-eval-lab check-evalset` confirms every section still exists in the pinned corpus. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
+[`data/eval/questions.jsonl`](data/eval/questions.jsonl) has 100 questions about the docs (49 tutorial, 31 advanced, 8 how-to, 7 deployment, 5 core). Each has a reference answer and the page and heading path of the section that answers it. A retrieved chunk counts as relevant when it overlaps that section, which works the same way for every chunking strategy. [data/eval/README.md](data/eval/README.md) explains how the set was built and its limits. `uv run rag-eval-lab check-evalset` confirms every section still exists in the pinned corpus.
+
+## Run the evals
+
+```bash
+uv run rag-eval-lab eval --strategy fixed --retriever vector   # one configuration
+uv run rag-eval-lab eval-grid                                  # every chunking x retrieval pair
+uv run rag-eval-lab report                                     # rebuild results/summary.md
+```
+
+Each run saves `results/runs/<config>.json` with the metrics and, for every question, the rank of the first relevant chunk and the search latency, so any number in the summary can be traced back to individual questions. The metrics are Hit@1/3/5/10 (share of questions with a relevant chunk in the top k), MRR@10 and p50/p95 latency. Hybrid search fuses the two rankings with reciprocal rank fusion ([ADR-0003](docs/decisions/ADR-0003-reciprocal-rank-fusion.md)).
 
 ## Design decisions
 
