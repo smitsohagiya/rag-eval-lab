@@ -6,6 +6,8 @@ and the project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-19
+
 ### Added
 
 - `fetch-corpus` downloads the FastAPI 0.165.0 docs, verifies the archive checksum and keeps the English documentation pages (#7).
@@ -15,6 +17,7 @@ and the project uses [Semantic Versioning](https://semver.org/).
 - An eval set of 100 questions with reference answers and source sections, and a `check-evalset` command that confirms every section exists in the corpus (#10).
 - `eval`, `eval-grid` and `report` commands: Hit@1/3/5/10, MRR@10 and latency for each configuration, saved per run with per-question detail (#11).
 - Optional cross-encoder re-ranking of the top 30 candidates for any retriever (`--rerank` on `search`, `eval` and `eval-grid`) (#12).
+- First published results: 12 configurations scored on 100 questions (#13).
 
 ### Fixed
 

@@ -24,7 +24,7 @@ See [docs/architecture.md](docs/architecture.md) for the pipeline diagram.
 
 ## Status
 
-Early. The v0.1 roadmap is tracked in the [issues](https://github.com/smitsohagiya/rag-eval-lab/issues). Results will appear here after the first full run.
+v0.1.0 is complete: ingestion, indexing, three retrievers, re-ranking, the eval set and the published results below. Next steps are in [What I'd do next](#what-id-do-next).
 
 ## Quickstart
 
@@ -70,6 +70,31 @@ On this question vector search puts the right section first and keyword search d
 
 [`data/eval/questions.jsonl`](data/eval/questions.jsonl) has 100 questions about the docs (49 tutorial, 31 advanced, 8 how-to, 7 deployment, 5 core). Each has a reference answer and the page and heading path of the section that answers it. A retrieved chunk counts as relevant when it overlaps that section, which works the same way for every chunking strategy. [data/eval/README.md](data/eval/README.md) explains how the set was built and its limits. `uv run rag-eval-lab check-evalset` confirms every section still exists in the pinned corpus.
 
+## Results
+
+FastAPI 0.165.0 docs, 100 questions, `bge-small-en-v1.5` embeddings and a MiniLM cross-encoder, all running on a laptop CPU (Apple Silicon). The full 12-row table is in [results/summary.md](results/summary.md), and the per-question data is in [results/runs/](results/runs).
+
+| Chunking | Retrieval | Re-rank | Hit@1 | Hit@5 | Hit@10 | MRR@10 | p50 latency |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| fixed | hybrid | yes | 72% | 97% | 99% | **0.833** | 2.0 s |
+| fixed | vector | yes | 72% | 95% | 97% | 0.827 | 1.9 s |
+| fixed | vector | no | 68% | 94% | 97% | 0.797 | 10 ms |
+| fixed | hybrid | no | 65% | 93% | 98% | 0.770 | 21 ms |
+| heading | hybrid | no | 63% | 92% | 98% | 0.744 | 20 ms |
+| heading | vector | no | 62% | 88% | 95% | 0.729 | 8 ms |
+| fixed | keyword | no | 33% | 80% | 86% | 0.509 | 7 ms |
+| heading | keyword | no | 30% | 67% | 84% | 0.481 | 7 ms |
+
+What the numbers say:
+
+- **Re-ranking is the biggest single gain.** It lifts every configuration, and keyword search goes from 0.509 to 0.806 MRR. The cost is about 2 seconds per question on a CPU, because the cross-encoder reads 30 candidates.
+- **Without re-ranking, fixed-size chunks with vector search are the best value:** 94% Hit@5 at 10 ms.
+- **Fixed windows beat heading sections** (MRR 0.797 vs 0.729 with vector search). Heading sections range from a few lines to 5,600 characters. Short ones lack context, and long ones get truncated by the 512-token embedding model.
+- **Hybrid search adds recall more than precision.** It has the best Hit@10 (98 to 99%), but with fixed chunks its Hit@1 is lower than vector search alone, because keyword search is weak on paraphrased questions.
+- **How-to pages are the hardest area** (75% Hit@5 with the best configuration). Each page covers many small topics.
+
+Caveats: one corpus and 100 questions, each with one relevant section, so differences of 2 to 3 points are within noise.
+
 ## Run the evals
 
 ```bash
@@ -84,6 +109,12 @@ Each run saves `results/runs/<config>.json` with the metrics and, for every ques
 ## Design decisions
 
 Recorded in [docs/decisions](docs/decisions).
+
+## What I'd do next
+
+- Run the eval grid in CI on every pull request and fail when Hit@5 drops, so retrieval changes are gated like code.
+- Add answer-level scoring with an LLM judge, calibrated against a small hand-labelled sample.
+- Try heading-aware chunks with a size cap, combining structure with the even sizes that made fixed windows win.
 
 ## License
 
