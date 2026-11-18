@@ -6,7 +6,7 @@ RUN uv sync --locked --no-dev --no-install-project
 COPY src ./src
 RUN uv sync --locked --no-dev
 
-FROM python:3.12-slim-bookworm
+FROM python:3.15-slim-bookworm
 WORKDIR /app
 RUN useradd --create-home app
 COPY --from=build --chown=app:app /app /app
